@@ -44,7 +44,7 @@ export default function LoginPage() {
           <motion.div
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 400, damping: 20 }}
-            className="w-16 h-16 rounded-2xl bg-gradient-to-br from-gb-400 to-gb-600 shadow-glow mx-auto mb-6 flex items-center justify-center overflow-hidden"
+            className="w-16 h-16 rounded-2xl bg-gradient-to-br from-gb-400 to-gb-600 mx-auto mb-6 flex items-center justify-center overflow-hidden"
           >
             <img src="/logo-grande.jpeg" alt="GB" className="w-full h-full object-cover" />
           </motion.div>
@@ -123,10 +123,8 @@ export default function LoginPage() {
             type="submit"
             disabled={loading}
             className="w-full mt-6 px-5 py-3.5 rounded-2xl font-semibold text-white
-              bg-gradient-to-r from-gb-500 to-gb-600 hover:from-gb-400 hover:to-gb-500
-              shadow-[0_8px_32px_rgba(59,108,246,0.4)] hover:shadow-[0_12px_48px_rgba(59,108,246,0.5)]
-              transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none
-              uppercase tracking-wider text-sm"
+              bg-gradient-to-r from-gb-500 to-gb-600 disabled:opacity-50 
+              disabled:pointer-events-none uppercase tracking-wider text-sm"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
