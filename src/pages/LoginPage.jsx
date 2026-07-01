@@ -20,7 +20,6 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-charcoal-950 px-4 sm:px-6 relative overflow-hidden">
-      {/* Fondos glassmorphic con gradiente estratégico */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -50,7 +49,7 @@ export default function LoginPage() {
             <img src="/logo-grande.jpeg" alt="GB" className="w-full h-full object-cover" />
           </motion.div>
           <h1 className="text-2xl font-bold text-white leading-tight">GB Soluciones Digitales</h1>
-          <p className="text-sm text-white/50 mt-2">Panel administrativo seguro</p>
+          <p className="text-sm text-white/50 mt-2">Panel administrativo</p>
         </div>
 
         {/* Form */}
