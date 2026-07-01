@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X } from "lucide-react"
 import Sidebar from "./Sidebar"
 
@@ -8,33 +8,32 @@ export default function AppShell({ children }) {
 
   return (
     <div className="flex min-h-screen bg-charcoal-950">
-      {/* Desktop Sidebar (hidden on mobile) */}
-      <div className="hidden md:block md:fixed md:inset-y-0 md:left-0 md:z-40">
+      <div className="hidden md:block relative z-40">
         <Sidebar />
       </div>
 
-      {/* Mobile Sidebar (visible only on mobile) */}
-      {sidebarOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={() => setSidebarOpen(false)}
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
-        />
-      )}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSidebarOpen(false)}
+            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          />
+        )}
+      </AnimatePresence>
+
       <motion.div
         initial={{ x: "-100%" }}
         animate={{ x: sidebarOpen ? 0 : "-100%" }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="fixed inset-y-0 left-0 w-64 z-50 md:hidden"
+        className="fixed inset-y-0 left-0 z-50 md:hidden"
       >
         <Sidebar />
       </motion.div>
 
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col w-full md:ml-64">
-        {/* Mobile Header */}
+      <main className="flex-1 flex flex-col min-w-0">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -57,7 +56,6 @@ export default function AppShell({ children }) {
           <div className="w-10" />
         </motion.div>
 
-        {/* Page Content */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
