@@ -4,18 +4,23 @@ import ConversationList from "../components/conversations/ConversationList"
 import ConversationDetail from "../components/conversations/ConversationDetail"
 import FiltersBar from "../components/conversations/FiltersBar"
 import { useConversations } from "../hooks/useConversations"
- 
+
 export default function ConversationsPage() {
   const [estado, setEstado] = useState(null)
   const [canal, setCanal] = useState(null)
   const [selectedId, setSelectedId] = useState(null)
- 
+
   const { conversations, loading, refetch } = useConversations({ estado, channel: canal })
- 
+
   return (
     <AppShell>
-      <div className="flex h-screen">
-        <div className="w-[380px] shrink-0 border-r border-white/[0.06] flex flex-col">
+      <div className="flex h-full min-h-0 relative overflow-hidden">
+        <div 
+          className={`
+            w-full md:w-[380px] shrink-0 border-r border-white/[0.06] flex-col h-full bg-charcoal-950 md:bg-transparent
+            ${selectedId ? "hidden md:flex" : "flex"}
+          `}
+        >
           <div className="px-6 pt-8 pb-2">
             <h1 className="text-lg font-bold text-white mb-1">Conversaciones</h1>
             <p className="text-xs text-white/35 mb-5">{conversations.length} en total</p>
@@ -30,7 +35,7 @@ export default function ConversationsPage() {
               }}
             />
           </div>
-          <div className="flex-1 overflow-y-auto px-4 pb-6">
+          <div className="flex-1 overflow-y-auto px-4 pb-6 scrollbar-none">
             <ConversationList
               conversations={conversations}
               loading={loading}
@@ -39,10 +44,20 @@ export default function ConversationsPage() {
             />
           </div>
         </div>
- 
-        <div className="flex-1 min-w-0">
-          <ConversationDetail conversationId={selectedId} onStatusChanged={refetch} />
+
+        <div 
+          className={`
+            flex-1 min-w-0 flex-col h-full bg-charcoal-950 md:bg-transparent
+            ${!selectedId ? "hidden md:flex" : "flex"}
+          `}
+        >
+          <ConversationDetail 
+            conversationId={selectedId} 
+            onStatusChanged={refetch}
+            onBack={() => setSelectedId(null)} 
+          />
         </div>
+        
       </div>
     </AppShell>
   )
