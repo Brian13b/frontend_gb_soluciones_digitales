@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react"
 import { motion } from "framer-motion"
-import { Copy, MessageCircle, Mail, Check } from "lucide-react"
 import MessageBubble from "./MessageBubble"
 import ContactModal from "./ContactModal"
+import ContactsList from "./ContactsList"
 import Card from "../ui/Card"
 import Button from "../ui/Button"
 import Badge from "../ui/Badge"
@@ -107,51 +107,12 @@ export default function ConversationDetail({ conversationId, onStatusChanged }) 
       </div>
  
       <div className="flex-1 overflow-y-auto px-8 py-6 space-y-8">
-        {(conversation.contact_phone || conversation.contact_email) && (
+        {conversation.contacts && conversation.contacts.length > 0 && (
           <Card className="p-5">
-            <p className="text-xs font-semibold text-white/40 uppercase tracking-wide mb-3">Contacto</p>
-            <div className="space-y-2.5">
-              {conversation.contact_phone && (
-                <div className="flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl bg-white/[0.03]">
-                  <span className="text-sm text-white/70 font-mono">{conversation.contact_phone}</span>
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => handleCopy(conversation.contact_phone, "phone")}
-                      className="p-1.5 text-white/40 hover:text-white/80 transition-colors"
-                    >
-                      {copied === "phone" ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
-                    </button>
-                    <a
-                      href={`https://wa.me/${conversation.contact_phone.replace(/\D/g, "")}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-1.5 text-white/40 hover:text-emerald-400 transition-colors"
-                    >
-                      <MessageCircle size={14} />
-                    </a>
-                  </div>
-                </div>
-              )}
-              {conversation.contact_email && (
-                <div className="flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl bg-white/[0.03]">
-                  <span className="text-sm text-white/70 font-mono truncate">{conversation.contact_email}</span>
-                  <div className="flex items-center gap-1 shrink-0">
-                    <button
-                      onClick={() => handleCopy(conversation.contact_email, "email")}
-                      className="p-1.5 text-white/40 hover:text-white/80 transition-colors"
-                    >
-                      {copied === "email" ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
-                    </button>
-                    <a
-                      href={`mailto:${conversation.contact_email}`}
-                      className="p-1.5 text-white/40 hover:text-gb-400 transition-colors"
-                    >
-                      <Mail size={14} />
-                    </a>
-                  </div>
-                </div>
-              )}
-            </div>
+            <p className="text-xs font-semibold text-white/40 uppercase tracking-wide mb-3">
+              Contactos Capturados ({conversation.contacts.length})
+            </p>
+            <ContactsList contacts={conversation.contacts} copied={copied} onCopy={handleCopy} />
           </Card>
         )}
  

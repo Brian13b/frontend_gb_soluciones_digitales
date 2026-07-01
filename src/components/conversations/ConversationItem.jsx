@@ -4,10 +4,19 @@ import Badge from "../ui/Badge"
 import { ESTADOS } from "../../utils/constants"
 import { formatDate } from "../../utils/formatters"
  
+const VALIDATION_COLORS = {
+  VERIFIED: { color: "text-emerald-400", label: "Verificado" },
+  PENDING: { color: "text-yellow-400", label: "Pendiente" },
+}
+
 export default function ConversationItem({ conversation, active, onClick }) {
   const estado = ESTADOS[conversation.estado] || ESTADOS.abierta
   const ChannelIcon = conversation.channel === "whatsapp" ? MessageCircle : Globe
- 
+
+  const primaryContact = conversation.contacts?.find(c => c.is_primary) || conversation.contacts?.[0]
+  const validationState = primaryContact ? VALIDATION_COLORS[primaryContact.validation_status] : null
+  const contactDisplay = primaryContact?.email || primaryContact?.phone || null
+
   return (
     <motion.button
       onClick={onClick}
@@ -30,9 +39,21 @@ export default function ConversationItem({ conversation, active, onClick }) {
           {estado.label}
         </Badge>
       </div>
-      <div className="flex items-center justify-between text-xs text-white/35">
-        <span>{conversation.message_count} mensajes</span>
-        <span>{formatDate(conversation.created_at)}</span>
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between text-xs text-white/35">
+          <span>{conversation.message_count} mensajes</span>
+          <span>{formatDate(conversation.created_at)}</span>
+        </div>
+        {contactDisplay && (
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs text-white/50 font-mono truncate">{contactDisplay}</span>
+            {validationState && (
+              <span className={`text-xs font-semibold ${validationState.color}`}>
+                {validationState.label}
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </motion.button>
   )
