@@ -10,15 +10,15 @@
   --color-charcoal-600: #2d303c;
   --color-charcoal-500: #3a3e4c;
 
-  /* Colores GB */
-  --color-gb-50: #eef4ff;
-  --color-gb-100: #dbe7ff;
-  --color-gb-300: #93b7ff;
-  --color-gb-400: #5f8dff;
-  --color-gb-500: #3b6cf6;
-  --color-gb-600: #2952d9;
-  --color-gb-700: #213fac;
-  --color-gb-900: #101d4d;
+  /* Colores GB - Paleta Teal/Acero + Menta */
+  --color-gb-50: #e5f2f0;
+  --color-gb-100: #d4e8e5;
+  --color-gb-300: #a8d4ce;
+  --color-gb-400: #7cc0b5;
+  --color-gb-500: #4c87a4;
+  --color-gb-600: #3a6b87;
+  --color-gb-700: #2d546a;
+  --color-gb-900: #1a3038;
 
   /* Tipografía */
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
