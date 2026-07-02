@@ -114,8 +114,8 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className="h-full flex flex-col overflow-hidden" 
     >
-      <div className="flex-none flex items-center justify-between px-4 md:px-8 py-4 md:py-6 border-b border-white/[0.06] bg-charcoal-900/50 backdrop-blur-md">
-        <div className="flex items-center gap-3">
+      <header className="flex-none px-4 md:px-8 py-4 md:py-6 border-b border-white/[0.06] bg-charcoal-900/50 backdrop-blur-md">
+        <div className="flex items-center justify-between">
           <button 
             onClick={onBack}
             className="md:hidden p-2 -ml-2 text-white/50 hover:text-white bg-white/5 rounded-lg"
@@ -165,7 +165,7 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
             <Trash2 size={18} />
           </button>
         </div>
-      </div>
+      </header>
 
       <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 space-y-8 scrollbar-none">
         {/* Mensajes */}
