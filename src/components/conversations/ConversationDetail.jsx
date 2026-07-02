@@ -114,7 +114,7 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className="h-full flex flex-col"
     >
-      <div className="flex items-center justify-between px-4 md:px-8 py-4 md:py-6 border-b border-white/[0.06] bg-charcoal-900/50 backdrop-blur-md sticky top-0 z-10">
+      <div className="flex items-center justify-between px-4 md:px-8 py-4 md:py-6 border-b border-white/[0.06] bg-charcoal-900/50 backdrop-blur-md fixed top-0 z-10">
         <div className="flex items-center gap-3">
           <button 
             onClick={onBack}
