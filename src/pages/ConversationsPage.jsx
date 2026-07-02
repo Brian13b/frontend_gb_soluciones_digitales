@@ -18,11 +18,11 @@ export default function ConversationsPage() {
       <div className="flex h-full min-h-0 overflow-hidden">
         <div 
           className={`
-            w-full md:w-[380px] shrink-0 border-r border-white/[0.06] flex-col h-full bg-charcoal-950 md:bg-transparent
+            w-[380px] shrink-0 border-r border-white/[0.06] flex flex-col h-full bg-charcoal-950 md:bg-transparent
             ${selectedId ? "hidden md:flex" : "flex"}
           `}
         >
-          <div className="px-6 pt-8 pb-2">
+          <div className="flex-none px-6 pt-8 pb-2">
             <h1 className="text-lg font-bold text-white mb-1">Conversaciones</h1>
             <p className="text-xs text-white/35 mb-5">{conversations.length} en total</p>
             <FiltersBar
@@ -36,7 +36,7 @@ export default function ConversationsPage() {
               }}
             />
           </div>
-          <div className="flex-1 min-w-0 h-full">
+          <div className="flex-1 overflow-y-auto px-4 pb-6">
             <ConversationList
               conversations={conversations}
               loading={loading}
