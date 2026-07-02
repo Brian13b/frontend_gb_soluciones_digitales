@@ -23,6 +23,9 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
   const [saving, setSaving] = useState(false)
   const [copied, setCopied] = useState(null)
 
+  const estadoDefault = { label: "...", color: "text-white", bg: "bg-white/10", ring: "" };
+  const estado = ESTADOS[conversation.estado] || ESTADOS.ABIERTA || estadoDefault;
+
   const load = useCallback(async () => {
     if (!conversationId) return
     setLoading(true)
