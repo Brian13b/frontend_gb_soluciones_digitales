@@ -168,16 +168,6 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 space-y-8 scrollbar-none">
-        
-        {conversation.contacts && conversation.contacts.length > 0 && (
-          <Card className="p-5">
-            <p className="text-xs font-semibold text-white/40 uppercase tracking-wide mb-3">
-              Contactos Capturados
-            </p>
-            <ContactsList contacts={conversation.contacts} copied={copied} onCopy={handleCopy} />
-          </Card>
-        )}
-
         {/* Mensajes */}
         <div>
           <p className="text-xs font-semibold text-white/40 uppercase tracking-wide mb-3">Conversación</p>
