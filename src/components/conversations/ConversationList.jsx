@@ -2,8 +2,8 @@ import { MessagesSquare } from "lucide-react"
 import ConversationItem from "./ConversationItem"
 import EmptyState from "../ui/EmptyState"
 import Spinner from "../ui/Spinner"
- 
-export default function ConversationList({ conversations, loading, selectedId, onSelect }) {
+
+export default function ConversationList({ conversations, loading, selectedId, onSelect, onStatusChange }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
@@ -11,7 +11,7 @@ export default function ConversationList({ conversations, loading, selectedId, o
       </div>
     )
   }
- 
+
   if (conversations.length === 0) {
     return (
       <EmptyState
@@ -21,7 +21,7 @@ export default function ConversationList({ conversations, loading, selectedId, o
       />
     )
   }
- 
+
   return (
     <div className="space-y-2">
       {conversations.map((conv) => (
@@ -30,6 +30,7 @@ export default function ConversationList({ conversations, loading, selectedId, o
           conversation={conv}
           active={selectedId === conv.id}
           onClick={() => onSelect(conv.id)}
+          onStatusChange={onStatusChange} 
         />
       ))}
     </div>

@@ -8,13 +8,13 @@ import Button from "../ui/Button"
 import Badge from "../ui/Badge"
 import Spinner from "../ui/Spinner"
 import EmptyState from "../ui/EmptyState"
-import { MessagesSquare } from "lucide-react"
+import { MessagesSquare, ChevronLeft, ExternalLink, CheckCircle2 } from "lucide-react"
 import { ESTADOS } from "../../utils/constants"
 import { formatDateTime } from "../../utils/formatters"
 import { conversationsService } from "../../services/conversations.service"
 import { useAuth } from "../../context/AuthContext"
- 
-export default function ConversationDetail({ conversationId, onStatusChanged }) {
+
+export default function ConversationDetail({ conversationId, onStatusChanged, onBack }) {
   const { user } = useAuth()
   const [conversation, setConversation] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -22,7 +22,7 @@ export default function ConversationDetail({ conversationId, onStatusChanged }) 
   const [modalOpen, setModalOpen] = useState(false)
   const [saving, setSaving] = useState(false)
   const [copied, setCopied] = useState(null)
- 
+
   const load = useCallback(async () => {
     if (!conversationId) return
     setLoading(true)
@@ -37,30 +37,28 @@ export default function ConversationDetail({ conversationId, onStatusChanged }) 
       setLoading(false)
     }
   }, [conversationId])
- 
+
   useEffect(() => {
     load()
   }, [load])
- 
+
   const handleCopy = (value, key) => {
     navigator.clipboard.writeText(value)
     setCopied(key)
     setTimeout(() => setCopied(null), 1500)
   }
- 
-  const handleContactSubmit = async (method, notes) => {
+
+  const handleStatusUpdate = async (nuevoEstado) => {
     setSaving(true)
     try {
-      await conversationsService.createContactAttempt(conversationId, user.id, { method, notes })
-      await conversationsService.updateEstado(conversationId, "contactado")
+      await conversationsService.updateEstado(conversationId, nuevoEstado)
       await load()
       onStatusChanged?.()
-      setModalOpen(false)
     } finally {
       setSaving(false)
     }
   }
- 
+
   if (!conversationId) {
     return (
       <div className="h-full flex items-center justify-center">
@@ -72,7 +70,7 @@ export default function ConversationDetail({ conversationId, onStatusChanged }) 
       </div>
     )
   }
- 
+
   if (loading || !conversation) {
     return (
       <div className="h-full flex items-center justify-center">
@@ -80,42 +78,82 @@ export default function ConversationDetail({ conversationId, onStatusChanged }) 
       </div>
     )
   }
- 
+
   const estado = ESTADOS[conversation.estado] || ESTADOS.abierta
- 
+  const primaryContact = conversation.contacts?.find(c => c.is_primary) || conversation.contacts?.[0]
+  const hasPhone = !!primaryContact?.phone
+  const hasEmail = !!primaryContact?.email
+  const actionLink = hasPhone 
+    ? `https://wa.me/${primaryContact.phone.replace(/\D/g, "")}` 
+    : (hasEmail ? `mailto:${primaryContact.email}` : null)
+  const actionText = hasPhone ? "Abrir en WhatsApp" : (hasEmail ? "Abrir en Gmail" : "Sin contacto")
+
   return (
     <motion.div
       key={conversationId}
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className="h-full flex flex-col"
     >
-      <div className="flex items-start justify-between px-8 py-6 border-b border-white/[0.06]">
-        <div>
-          <div className="flex items-center gap-3 mb-1.5">
-            <h2 className="text-lg font-bold text-white">{conversation.contact_name || "Sin nombre"}</h2>
-            <Badge color={estado.color} bg={estado.bg} ring={estado.ring}>{estado.label}</Badge>
+      <div className="flex items-center justify-between px-4 md:px-8 py-4 md:py-6 border-b border-white/[0.06] bg-charcoal-900/50 backdrop-blur-md sticky top-0 z-10">
+        <div className="flex items-center gap-3">
+          {/* Botón Volver (Solo Móvil) */}
+          <button 
+            onClick={onBack}
+            className="md:hidden p-2 -ml-2 text-white/50 hover:text-white bg-white/5 rounded-lg"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          
+          <div>
+            <div className="flex items-center gap-3 mb-1">
+              <h2 className="text-base md:text-lg font-bold text-white truncate max-w-[150px] md:max-w-xs">
+                {conversation.contact_name || "Sin nombre"}
+              </h2>
+              <Badge color={estado.color} bg={estado.bg} ring={estado.ring}>{estado.label}</Badge>
+            </div>
+            <p className="text-[10px] md:text-xs text-white/35">
+              {conversation.channel === "whatsapp" ? "WhatsApp" : "Sitio Web"} · {formatDateTime(conversation.created_at)}
+            </p>
           </div>
-          <p className="text-xs text-white/35">
-            {conversation.channel === "whatsapp" ? "WhatsApp" : "Sitio Web"} · {formatDateTime(conversation.created_at)}
-          </p>
         </div>
-        <Button size="sm" onClick={() => setModalOpen(true)}>
-          Registrar contacto
-        </Button>
+
+        {/* Acciones Rápidas */}
+        <div className="flex gap-2">
+          {actionLink && (
+            <a 
+              href={actionLink} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gb-500/20 text-gb-300 hover:bg-gb-500/30 transition-colors text-xs font-medium border border-gb-500/20"
+            >
+              {actionText} <ExternalLink size={14} />
+            </a>
+          )}
+          <Button 
+            size="sm" 
+            variant="secondary"
+            onClick={() => handleStatusUpdate("CERRADA")}
+            disabled={saving || conversation.estado === "CERRADA"}
+          >
+            {saving ? "Guardando..." : "Marcar finalizada"}
+          </Button>
+        </div>
       </div>
- 
-      <div className="flex-1 overflow-y-auto px-8 py-6 space-y-8">
+
+      <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 space-y-8 scrollbar-none">
+        {/* Contactos */}
         {conversation.contacts && conversation.contacts.length > 0 && (
           <Card className="p-5">
             <p className="text-xs font-semibold text-white/40 uppercase tracking-wide mb-3">
-              Contactos Capturados ({conversation.contacts.length})
+              Contactos Capturados
             </p>
             <ContactsList contacts={conversation.contacts} copied={copied} onCopy={handleCopy} />
           </Card>
         )}
- 
+
+        {/* Mensajes */}
         <div>
           <p className="text-xs font-semibold text-white/40 uppercase tracking-wide mb-3">Conversación</p>
           <div className="space-y-5">
@@ -124,33 +162,7 @@ export default function ConversationDetail({ conversationId, onStatusChanged }) 
             ))}
           </div>
         </div>
- 
-        {attempts.length > 0 && (
-          <div>
-            <p className="text-xs font-semibold text-white/40 uppercase tracking-wide mb-3">Historial de contactos</p>
-            <div className="space-y-2">
-              {attempts.map((a) => (
-                <Card key={a.id} className="p-3.5">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-semibold text-gb-300 capitalize">{a.method}</span>
-                    <span className="text-[10px] text-white/30">{formatDateTime(a.created_at)}</span>
-                  </div>
-                  {a.notes && <p className="text-xs text-white/50">{a.notes}</p>}
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
- 
-      <ContactModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSubmit={handleContactSubmit}
-        phone={conversation.contact_phone}
-        email={conversation.contact_email}
-        loading={saving}
-      />
     </motion.div>
   )
 }

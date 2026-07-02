@@ -4,6 +4,7 @@ import ConversationList from "../components/conversations/ConversationList"
 import ConversationDetail from "../components/conversations/ConversationDetail"
 import FiltersBar from "../components/conversations/FiltersBar"
 import { useConversations } from "../hooks/useConversations"
+import { conversationsService } from "../services/conversations.service"
 
 export default function ConversationsPage() {
   const [estado, setEstado] = useState(null)
@@ -41,6 +42,10 @@ export default function ConversationsPage() {
               loading={loading}
               selectedId={selectedId}
               onSelect={setSelectedId}
+              onStatusChange={async (id, nuevoEstado) => {
+                await conversationsService.updateEstado(id, nuevoEstado)
+                refetch()
+              }}
             />
           </div>
         </div>

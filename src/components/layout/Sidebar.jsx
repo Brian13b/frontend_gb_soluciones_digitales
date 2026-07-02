@@ -30,7 +30,7 @@ export default function Sidebar() {
   return (
     <motion.aside
       initial={false}
-      animate={{ width: isCollapsed ? 80 : 256 }} // 80px contraído, 256px (w-64) expandido
+      animate={{ width: isCollapsed ? 80 : 256 }}
       className="shrink-0 h-screen sticky top-0 flex flex-col border-r border-white/[0.08] bg-charcoal-900/40 backdrop-blur-2xl relative z-20"
     >
       {/* Botón para Colapsar/Expandir */}
@@ -49,7 +49,7 @@ export default function Sidebar() {
         className={`px-6 pt-6 pb-8 border-b border-white/[0.06] flex items-center ${isCollapsed ? "justify-center px-0" : ""}`}
       >
         <div className="flex items-center gap-3 group cursor-default">
-          <div className="w-10 h-10 shrink-0 rounded-2xl bg-gradient-to-br from-gb-400 to-gb-600 shadow-glow flex items-center justify-center overflow-hidden group-hover:shadow-[0_8px_24px_rgba(59,108,246,0.4)] transition-all duration-300">
+          <div className="w-10 h-10 shrink-0 rounded-2xl bg-gradient-to-br from-gb-400 to-gb-600 flex items-center justify-center overflow-hidden">
             <img src="/logo-grande.jpeg" alt="GB" className="w-full h-full object-cover" />
           </div>
           <AnimatePresence>
