@@ -112,9 +112,9 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      className="h-full flex flex-col"
+      className="h-full flex flex-col overflow-hidden" 
     >
-      <div className="flex items-center justify-between px-4 md:px-8 py-4 md:py-6 border-b border-white/[0.06] bg-charcoal-900/50 backdrop-blur-md fixed top-0 z-10">
+      <div className="flex-none flex items-center justify-between px-4 md:px-8 py-4 md:py-6 border-b border-white/[0.06] bg-charcoal-900/50 backdrop-blur-md">
         <div className="flex items-center gap-3">
           <button 
             onClick={onBack}
@@ -168,6 +168,16 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 space-y-8 scrollbar-none">
+        
+        {conversation.contacts && conversation.contacts.length > 0 && (
+          <Card className="p-5">
+            <p className="text-xs font-semibold text-white/40 uppercase tracking-wide mb-3">
+              Contactos Capturados
+            </p>
+            <ContactsList contacts={conversation.contacts} copied={copied} onCopy={handleCopy} />
+          </Card>
+        )}
+
         {/* Mensajes */}
         <div>
           <p className="text-xs font-semibold text-white/40 uppercase tracking-wide mb-3">Conversación</p>
