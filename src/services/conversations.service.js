@@ -1,17 +1,8 @@
 import { api } from "./api"
- 
-// Conversation structure:
-// {
-//   id, channel, created_at, estado, message_count,
-//   contact_name, messages: [...],
-//   contacts: [
-//     { id, name, email, phone, validation_status: 'PENDING'|'VERIFIED', is_primary: boolean }
-//   ]
-// }
 
 export const conversationsService = {
   list(filters = {}) {
-    return api.get("/api/conversations", { limit: 50, ...filters })
+    return api.get("/api/conversations", { limit: 500, ...filters }) // Aumentamos límite para paginar en frontend
   },
 
   getById(id) {
@@ -20,6 +11,10 @@ export const conversationsService = {
  
   updateEstado(id, estado) {
     return api.patch(`/api/conversations/${id}/estado?estado=${estado}`)
+  },
+
+  delete(id) {
+    return api.delete(`/api/conversations/${id}`)
   },
  
   createContactAttempt(conversationId, developerId, payload) {
@@ -35,5 +30,5 @@ export const conversationsService = {
  
   getStats() {
     return api.get("/api/stats")
-  },
+  }
 }

@@ -7,9 +7,9 @@ export default function FiltersBar({ estado, canal, onEstadoChange, onCanalChang
       <div className="w-44">
         <Select value={estado || ""} onChange={(e) => onEstadoChange(e.target.value || null)}>
           <option value="">Todos los estados</option>
-          <option value="abierta">Abiertas</option>
-          <option value="contactado">Contactadas</option>
-          <option value="cerrada">Cerradas</option>
+          <option value="ABIERTA">Abiertas</option>
+          <option value="CONTACTADA">Contactadas</option>
+          <option value="FINALIZADA">Finalizadas</option>
         </Select>
       </div>
       <div className="w-44">

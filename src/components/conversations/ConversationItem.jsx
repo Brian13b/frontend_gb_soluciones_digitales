@@ -16,6 +16,7 @@ export default function ConversationItem({ conversation, active, onClick, onStat
   const primaryContact = conversation.contacts?.find(c => c.is_primary) || conversation.contacts?.[0]
   const validationState = primaryContact ? VALIDATION_COLORS[primaryContact.validation_status] : null
   
+  const displayName = primaryContact?.name || "Sin nombre"
   const hasPhone = !!primaryContact?.phone
   const hasEmail = !!primaryContact?.email
   
@@ -34,7 +35,7 @@ export default function ConversationItem({ conversation, active, onClick, onStat
 
   const handleResolveClick = (e) => {
     e.stopPropagation()
-    onStatusChange?.(conversation.id, "CERRADA") 
+    onStatusChange?.(conversation.id, "FINALIZADA")
   }
 
   return (
@@ -49,14 +50,13 @@ export default function ConversationItem({ conversation, active, onClick, onStat
           : "bg-white/[0.02] border-white/[0.05] hover:bg-white/[0.04] hover:border-white/10"
       }`}
     >
-      {/* Header Info */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2 min-w-0">
           <div className={`p-1.5 rounded-md ${conversation.channel === 'whatsapp' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-blue-500/20 text-blue-400'}`}>
             <ChannelIcon size={14} className="shrink-0" />
           </div>
           <span className="text-sm font-semibold text-white/90 truncate">
-            {conversation.contact_name || "Sin nombre"}
+            {displayName}
           </span>
         </div>
         <Badge color={estado.color} bg={estado.bg} ring={estado.ring}>
@@ -64,13 +64,11 @@ export default function ConversationItem({ conversation, active, onClick, onStat
         </Badge>
       </div>
 
-      {/* Meta info */}
       <div className="flex items-center justify-between text-xs text-white/35 px-1">
         <span>{conversation.message_count} mensajes</span>
         <span>{formatDate(conversation.created_at)}</span>
       </div>
 
-      {/* Botones de Acción */}
       <div className="flex items-center gap-2 mt-1">
         <button
           onClick={handleActionClick}
