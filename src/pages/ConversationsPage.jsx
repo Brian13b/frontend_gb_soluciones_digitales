@@ -15,7 +15,7 @@ export default function ConversationsPage() {
 
   return (
     <AppShell>
-      <div className="flex h-full min-h-0 relative overflow-hidden">
+      <div className="flex h-full min-h-0 overflow-hidden">
         <div 
           className={`
             w-full md:w-[380px] shrink-0 border-r border-white/[0.06] flex-col h-full bg-charcoal-950 md:bg-transparent
@@ -36,7 +36,7 @@ export default function ConversationsPage() {
               }}
             />
           </div>
-          <div className="flex-1 overflow-y-auto px-4 pb-6 scrollbar-none">
+          <div className="flex-1 min-w-0 h-full">
             <ConversationList
               conversations={conversations}
               loading={loading}
