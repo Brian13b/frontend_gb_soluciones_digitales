@@ -23,9 +23,6 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
   const [saving, setSaving] = useState(false)
   const [copied, setCopied] = useState(null)
 
-  const estadoDefault = { label: "...", color: "text-white", bg: "bg-white/10", ring: "" };
-  const estado = ESTADOS[conversation.estado] || ESTADOS.ABIERTA || estadoDefault;
-
   const load = useCallback(async () => {
     if (!conversationId) return
     setLoading(true)
@@ -96,7 +93,8 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
     )
   }
 
-  const estado = ESTADOS[conversation.estado] || ESTADOS.abierta
+  const estadoDefault = { label: "...", color: "text-white", bg: "bg-white/10", ring: "" };
+  const estado = ESTADOS[conversation.estado] || ESTADOS.ABIERTA || estadoDefault;const estado = ESTADOS[conversation.estado] || ESTADOS.abierta
   const primaryContact = conversation.contacts?.find(c => c.is_primary) || conversation.contacts?.[0]
   
   const displayName = primaryContact?.name || "Sin nombre"
