@@ -94,7 +94,7 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
   }
 
   const estadoDefault = { label: "...", color: "text-white", bg: "bg-white/10", ring: "" };
-  const estado = ESTADOS[conversation.estado] || ESTADOS.ABIERTA || estadoDefault;const estado = ESTADOS[conversation.estado] || ESTADOS.abierta
+  const estado = ESTADOS[conversation.estado] || ESTADOS.ABIERTA || estadoDefault;
   const primaryContact = conversation.contacts?.find(c => c.is_primary) || conversation.contacts?.[0]
   
   const displayName = primaryContact?.name || "Sin nombre"
