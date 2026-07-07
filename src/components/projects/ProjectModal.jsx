@@ -30,6 +30,10 @@ export default function ProjectModal({ isOpen, onClose, projectId = null, onSucc
     display_order: 0,
     started_at: "",
     finished_at: "",
+    deployment_backend: "",
+    deployment_frontend: "",
+    deployment_database: "",
+    deployment_services: "",
   })
 
   const isCreateMode = !projectId
@@ -43,6 +47,7 @@ export default function ProjectModal({ isOpen, onClose, projectId = null, onSucc
           const data = await projectsService.getById(projectId)
           setProject(data)
           // Populate form with project data
+          const deploymentInfo = data.deployment_info || {}
           setFormData({
             title: data.title || "",
             slug: data.slug || "",
@@ -61,6 +66,10 @@ export default function ProjectModal({ isOpen, onClose, projectId = null, onSucc
             display_order: data.display_order || 0,
             started_at: data.started_at || "",
             finished_at: data.finished_at || "",
+            deployment_backend: deploymentInfo.backend || "",
+            deployment_frontend: deploymentInfo.frontend || "",
+            deployment_database: deploymentInfo.database || "",
+            deployment_services: deploymentInfo.services || "",
           })
         } catch (error) {
           setToast({
@@ -90,6 +99,10 @@ export default function ProjectModal({ isOpen, onClose, projectId = null, onSucc
         display_order: 0,
         started_at: "",
         finished_at: "",
+        deployment_backend: "",
+        deployment_frontend: "",
+        deployment_database: "",
+        deployment_services: "",
       })
       setProject(null)
     }
@@ -125,16 +138,32 @@ export default function ProjectModal({ isOpen, onClose, projectId = null, onSucc
 
     setSaving(true)
     try {
-      // Transform technologies: split by comma, trim, filter empty
-      const technologiesArray = formData.technologies
-        .split(",")
-        .map((tech) => tech.trim())
-        .filter((tech) => tech.length > 0)
+      // Build deployment_info from individual fields
+      const deployment_info = {
+        backend: formData.deployment_backend || null,
+        frontend: formData.deployment_frontend || null,
+        database: formData.deployment_database || null,
+        services: formData.deployment_services || null,
+      }
 
+      // Payload: technologies as string (backend expects comma-separated), dates as null if empty
       const payload = {
-        ...formData,
-        technologies: technologiesArray,
+        title: formData.title,
+        slug: formData.slug,
+        description: formData.description,
+        short_description: formData.short_description,
+        technologies: formData.technologies, // Send as string, not array
+        category: formData.category,
+        thumbnail_url: formData.thumbnail_url,
+        demo_url: formData.demo_url,
+        repo_url: formData.repo_url,
+        is_published: formData.is_published,
+        is_own_project: formData.is_own_project,
+        is_featured: formData.is_featured,
         display_order: parseInt(formData.display_order, 10) || 0,
+        started_at: formData.started_at || null,
+        finished_at: formData.finished_at || null,
+        deployment_info,
       }
 
       if (isCreateMode) {
@@ -319,6 +348,46 @@ export default function ProjectModal({ isOpen, onClose, projectId = null, onSucc
                   onChange={(e) => handleFieldChange("finished_at", e.target.value)}
                   disabled={saving}
                 />
+
+                {/* Info Técnica (Deployment Info) */}
+                <div className="border-t border-white/10 pt-6 mt-6">
+                  <h4 className="text-sm font-semibold text-white/60 mb-4 uppercase tracking-wider">
+                    Info técnica (interno)
+                  </h4>
+                  <div className="space-y-4 bg-white/5 p-4 rounded-xl border border-white/5">
+                    <Input
+                      label="Backend"
+                      value={formData.deployment_backend}
+                      onChange={(e) => handleFieldChange("deployment_backend", e.target.value)}
+                      placeholder="ej: Railway, Heroku, AWS"
+                      disabled={saving}
+                    />
+
+                    <Input
+                      label="Frontend"
+                      value={formData.deployment_frontend}
+                      onChange={(e) => handleFieldChange("deployment_frontend", e.target.value)}
+                      placeholder="ej: Vercel, Netlify, GitHub Pages"
+                      disabled={saving}
+                    />
+
+                    <Input
+                      label="Base de datos"
+                      value={formData.deployment_database}
+                      onChange={(e) => handleFieldChange("deployment_database", e.target.value)}
+                      placeholder="ej: PostgreSQL (Railway), MongoDB Atlas"
+                      disabled={saving}
+                    />
+
+                    <Input
+                      label="Servicios externos"
+                      value={formData.deployment_services}
+                      onChange={(e) => handleFieldChange("deployment_services", e.target.value)}
+                      placeholder="ej: OpenAI, Cloudinary, Stripe"
+                      disabled={saving}
+                    />
+                  </div>
+                </div>
 
                 {/* Checkboxes */}
                 <div className="space-y-3 pt-2">
