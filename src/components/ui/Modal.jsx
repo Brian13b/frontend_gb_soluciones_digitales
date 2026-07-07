@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion"
 import { X } from "lucide-react"
  
-export default function Modal({ open, onClose, title, children }) {
+export default function Modal({ open, onClose, title, children, maxWidth = "max-w-md" }) {
   return (
     <AnimatePresence>
       {open && (
@@ -17,7 +17,7 @@ export default function Modal({ open, onClose, title, children }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.98 }}
             transition={{ type: "spring", stiffness: 320, damping: 28 }}
-            className="glass-strong w-full max-w-md rounded-2xl shadow-soft"
+            className={`glass-strong w-full ${maxWidth} rounded-2xl shadow-soft`}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between px-6 py-5 border-b border-white/[0.06]">
