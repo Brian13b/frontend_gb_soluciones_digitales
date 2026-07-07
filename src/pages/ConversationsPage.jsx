@@ -16,13 +16,13 @@ export default function ConversationsPage() {
   return (
     <AppShell>
       <div className="flex h-full min-h-0 relative overflow-hidden">
-        <div 
+        <div
           className={`
-            w-full md:w-[380px] shrink-0 border-r border-white/[0.06] flex-col h-full bg-charcoal-950 md:bg-transparent
+            w-full md:w-[380px] shrink-0 border-r border-white/[0.06] flex flex-col h-full bg-charcoal-950 md:bg-transparent overflow-hidden
             ${selectedId ? "hidden md:flex" : "flex"}
           `}
         >
-          <div className="px-6 pt-8 pb-2">
+          <div className="shrink-0 px-6 pt-8 pb-2 border-b border-white/[0.06]">
             <h1 className="text-lg font-bold text-white mb-1">Conversaciones</h1>
             <p className="text-xs text-white/35 mb-5">{conversations.length} en total</p>
             <FiltersBar
@@ -36,7 +36,7 @@ export default function ConversationsPage() {
               }}
             />
           </div>
-          <div className="flex-1 overflow-y-auto px-4 pb-6 scrollbar-none">
+          <div className="flex-1 min-h-0 overflow-y-auto px-4 pb-6 scrollbar-none">
             <ConversationList
               conversations={conversations}
               loading={loading}
