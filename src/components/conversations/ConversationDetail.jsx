@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react"
+import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import MessageBubble from "./MessageBubble"
 import ContactModal from "./ContactModal"
@@ -8,6 +9,7 @@ import Button from "../ui/Button"
 import Badge from "../ui/Badge"
 import Spinner from "../ui/Spinner"
 import EmptyState from "../ui/EmptyState"
+import Toast from "../ui/Toast"
 import { MessagesSquare, ChevronLeft, ExternalLink, Trash2 } from "lucide-react"
 import { ESTADOS } from "../../utils/constants"
 import { formatDateTime } from "../../utils/formatters"
@@ -16,12 +18,15 @@ import { useAuth } from "../../context/AuthContext"
 
 export default function ConversationDetail({ conversationId, onStatusChanged, onBack }) {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [conversation, setConversation] = useState(null)
   const [loading, setLoading] = useState(true)
   const [attempts, setAttempts] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
   const [saving, setSaving] = useState(false)
   const [copied, setCopied] = useState(null)
+  const [convertLoading, setConvertLoading] = useState(false)
+  const [convertToast, setConvertToast] = useState(null)
 
   const load = useCallback(async () => {
     if (!conversationId) return
@@ -65,11 +70,47 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
       try {
         await conversationsService.delete(conversationId)
         onStatusChanged?.()
-        onBack() 
+        onBack()
       } catch (error) {
         console.error("Error al eliminar", error)
         setSaving(false)
       }
+    }
+  }
+
+  const handleConvertToClient = async () => {
+    setConvertLoading(true)
+    try {
+      const client = await conversationsService.convertFromConversation(conversationId)
+      setConvertToast({
+        type: "success",
+        message: "Cliente creado correctamente",
+        actionLabel: "Ver cliente",
+        onAction: () => {
+          navigate(`/clientes?tab=activo&clientId=${client.id}`)
+        },
+      })
+      await load()
+    } catch (error) {
+      console.error("Error converting to client:", error)
+      if (error.status === 400 && error.detail?.includes("contact")) {
+        setConvertToast({
+          type: "error",
+          message: "Falta información de contacto para convertir este cliente. Verificá que la conversación tenga nombre, teléfono o email registrado.",
+        })
+      } else if (error.status >= 500 || error.isNetworkError) {
+        setConvertToast({
+          type: "error",
+          message: error.detail || "Error del servidor, intentá de nuevo.",
+        })
+      } else {
+        setConvertToast({
+          type: "error",
+          message: error.detail || error.message || "Error desconocido",
+        })
+      }
+    } finally {
+      setConvertLoading(false)
     }
   }
 
@@ -147,13 +188,23 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
               {actionText} <ExternalLink size={14} />
             </a>
           )}
-          <Button 
-            size="sm" 
+          <Button
+            size="sm"
             variant="secondary"
             onClick={() => handleStatusUpdate("FINALIZADA")}
             disabled={saving || conversation.estado === "FINALIZADA"}
           >
             {saving ? "Guardando..." : "Marcar finalizada"}
+          </Button>
+
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={handleConvertToClient}
+            loading={convertLoading}
+            className="text-xs"
+          >
+            Convertir en cliente
           </Button>
 
           <button
@@ -178,6 +229,18 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
           </div>
         </div>
       </div>
+
+      {/* Convert-to-Client Toast */}
+      {convertToast && (
+        <Toast
+          type={convertToast.type}
+          message={convertToast.message}
+          actionLabel={convertToast.actionLabel}
+          onAction={convertToast.onAction}
+          isOpen={true}
+          onClose={() => setConvertToast(null)}
+        />
+      )}
     </motion.div>
   )
 }
