@@ -2,7 +2,7 @@ import { api } from "./api"
 
 export const conversationsService = {
   list(filters = {}) {
-    return api.get("/api/conversations", { limit: 500, ...filters }) // Aumentamos límite para paginar en frontend
+    return api.get("/api/conversations", { limit: 500, ...filters }) 
   },
 
   getById(id) {
@@ -30,5 +30,9 @@ export const conversationsService = {
  
   getStats() {
     return api.get("/api/stats")
+  },
+
+  convertFromConversation(conversationId) {
+    return api.post(`/api/conversations/${conversationId}/convert-to-client`)
   }
 }
