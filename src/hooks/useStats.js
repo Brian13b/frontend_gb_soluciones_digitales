@@ -18,8 +18,31 @@ export function useStats() {
  
   useEffect(() => {
     fetchStats()
-    const interval = setInterval(fetchStats, 30000)
-    return () => clearInterval(interval)
+
+    let interval = null
+    let isVisible = true
+
+    const handleVisibilityChange = () => {
+      isVisible = !document.hidden
+      if (isVisible && !window.__gb_modal_open) {
+        fetchStats()
+      }
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange)
+
+    if (isVisible && !window.__gb_modal_open) {
+      interval = setInterval(() => {
+        if (!document.hidden && !window.__gb_modal_open) {
+          fetchStats()
+        }
+      }, 30000)
+    }
+
+    return () => {
+      clearInterval(interval)
+      document.removeEventListener("visibilitychange", handleVisibilityChange)
+    }
   }, [fetchStats])
  
   return { stats, loading, refetch: fetchStats }

@@ -21,8 +21,31 @@ export function useConversations(filters) {
  
   useEffect(() => {
     fetchConversations()
-    const interval = setInterval(fetchConversations, 30000)
-    return () => clearInterval(interval)
+
+    let interval = null
+    let isVisible = true
+
+    const handleVisibilityChange = () => {
+      isVisible = !document.hidden
+      if (isVisible && !window.__gb_modal_open) {
+        fetchConversations()
+      }
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange)
+
+    if (isVisible && !window.__gb_modal_open) {
+      interval = setInterval(() => {
+        if (!document.hidden && !window.__gb_modal_open) {
+          fetchConversations()
+        }
+      }, 30000)
+    }
+
+    return () => {
+      clearInterval(interval)
+      document.removeEventListener("visibilitychange", handleVisibilityChange)
+    }
   }, [fetchConversations])
  
   return { conversations, loading, error, refetch: fetchConversations }

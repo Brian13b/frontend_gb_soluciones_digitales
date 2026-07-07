@@ -1,11 +1,18 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Modal from "../ui/Modal"
 import Select from "../ui/Select"
 import Button from "../ui/Button"
- 
+
 export default function ContactModal({ open, onClose, onSubmit, phone, email, loading }) {
   const [method, setMethod] = useState(phone ? "whatsapp" : "email")
   const [notes, setNotes] = useState("")
+
+  useEffect(() => {
+    window.__gb_modal_open = open
+    return () => {
+      window.__gb_modal_open = false
+    }
+  }, [open])
  
   const handleSubmit = (e) => {
     e.preventDefault()

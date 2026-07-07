@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import Input from "../components/ui/Input"
@@ -11,6 +11,15 @@ export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [focused, setFocused] = useState(null)
+  const [sessionExpiredError, setSessionExpiredError] = useState(null)
+
+  useEffect(() => {
+    const sessionExpired = sessionStorage.getItem("gb_session_expired")
+    if (sessionExpired) {
+      setSessionExpiredError("Tu sesión expiró. Iniciá sesión nuevamente.")
+      sessionStorage.removeItem("gb_session_expired")
+    }
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -105,14 +114,14 @@ export default function LoginPage() {
           </motion.div>
 
           {/* Error Message */}
-          {error && (
+          {(sessionExpiredError || error) && (
             <motion.div
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               className="text-xs text-red-300 bg-red-500/15 border border-red-500/30 rounded-2xl px-4 py-3 backdrop-blur-sm"
             >
-              {error}
+              {sessionExpiredError || error}
             </motion.div>
           )}
 

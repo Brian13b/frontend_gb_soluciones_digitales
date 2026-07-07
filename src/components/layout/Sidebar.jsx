@@ -62,7 +62,7 @@ export default function Sidebar() {
                 exit={{ opacity: 0, width: 0 }}
                 className="overflow-hidden whitespace-nowrap"
               >
-                <p className="text-sm font-bold text-white leading-tight">GB Soluciones</p>
+                <p className="text-sm font-bold text-white leading-tight">GB Soluciones Digitales</p>
                 <p className="text-[11px] text-white/40 mt-0.5">Admin Panel</p>
               </motion.div>
             )}

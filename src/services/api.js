@@ -1,9 +1,10 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8001"
  
 class ApiError extends Error {
-  constructor(message, status) {
+  constructor(message, status, headers = {}) {
     super(message)
     this.status = status
+    this.headers = headers
   }
 }
  
@@ -30,6 +31,7 @@ async function request(path, { method = "GET", body, params, auth = true } = {})
   if (res.status === 401) {
     localStorage.removeItem("gb_token")
     localStorage.removeItem("gb_user")
+    sessionStorage.setItem("gb_session_expired", "true")
     window.location.href = "/login"
     throw new ApiError("No autorizado", 401)
   }
@@ -40,7 +42,13 @@ async function request(path, { method = "GET", body, params, auth = true } = {})
       const data = await res.json()
       detail = data.detail || detail
     } catch {}
-    throw new ApiError(detail, res.status)
+
+    // Extract relevant headers (X-Client-ID, etc.)
+    const headers = {}
+    const clientId = res.headers.get("X-Client-ID")
+    if (clientId) headers["X-Client-ID"] = clientId
+
+    throw new ApiError(detail, res.status, headers)
   }
  
   if (res.status === 204) return null

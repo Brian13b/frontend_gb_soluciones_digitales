@@ -64,6 +64,20 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
     }
   }
 
+  const cycleEstado = () => {
+    const ciclo = ["ABIERTA", "CONTACTADA", "FINALIZADA"]
+    const currentIndex = ciclo.indexOf(conversation.estado)
+    let nextIndex = (currentIndex + 1) % ciclo.length
+
+    // After first "FINALIZADA", skip back to "CONTACTADA" (not "ABIERTA")
+    if (conversation.estado === "FINALIZADA" && currentIndex === 2) {
+      nextIndex = 1
+    }
+
+    const nuevoEstado = ciclo[nextIndex]
+    handleStatusUpdate(nuevoEstado)
+  }
+
   const handleDelete = async () => {
     if (window.confirm("¿Estás seguro de que deseas eliminar este chat? Esta acción no se puede deshacer.")) {
       setSaving(true)
@@ -93,7 +107,25 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
       await load()
     } catch (error) {
       console.error("Error converting to client:", error)
-      if (error.status === 400 && error.detail?.includes("contact")) {
+
+      if (error.status === 409) {
+        const clientId = error.headers?.["X-Client-ID"]
+        if (clientId) {
+          setConvertToast({
+            type: "warning",
+            message: "Esta conversación ya fue convertida a un cliente",
+            actionLabel: "Ver cliente",
+            onAction: () => {
+              navigate(`/clientes?tab=activo&clientId=${clientId}`)
+            },
+          })
+        } else {
+          setConvertToast({
+            type: "error",
+            message: "Esta conversación ya fue convertida a un cliente",
+          })
+        }
+      } else if (error.status === 400 && error.message?.includes("contact")) {
         setConvertToast({
           type: "error",
           message: "Falta información de contacto para convertir este cliente. Verificá que la conversación tenga nombre, teléfono o email registrado.",
@@ -101,12 +133,12 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
       } else if (error.status >= 500 || error.isNetworkError) {
         setConvertToast({
           type: "error",
-          message: error.detail || "Error del servidor, intentá de nuevo.",
+          message: error.message || "Error del servidor, intentá de nuevo.",
         })
       } else {
         setConvertToast({
           type: "error",
-          message: error.detail || error.message || "Error desconocido",
+          message: error.message || "Error desconocido",
         })
       }
     } finally {
@@ -153,9 +185,9 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      className="h-full flex flex-col"
+      className="h-full flex flex-col overflow-hidden"
     >
-      <div className="flex items-center justify-between px-4 md:px-8 py-4 md:py-6 border-b border-white/[0.06] bg-charcoal-900/50 backdrop-blur-md sticky top-0 z-10">
+      <div className="shrink-0 flex items-center justify-between px-4 md:px-8 py-4 md:py-6 border-b border-white/[0.06] bg-charcoal-900/50 backdrop-blur-md sticky top-0 z-10">
         <div className="flex items-center gap-3">
           <button 
             onClick={onBack}
@@ -191,10 +223,10 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
           <Button
             size="sm"
             variant="secondary"
-            onClick={() => handleStatusUpdate("FINALIZADA")}
-            disabled={saving || conversation.estado === "FINALIZADA"}
+            onClick={cycleEstado}
+            disabled={saving || !conversation}
           >
-            {saving ? "Guardando..." : "Marcar finalizada"}
+            {saving ? "Guardando..." : `${ESTADOS[conversation?.estado]?.label || "Estado"} →`}
           </Button>
 
           <Button
@@ -218,7 +250,7 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 space-y-8 scrollbar-none">
+      <div className="flex-1 min-h-0 overflow-y-auto px-4 md:px-8 py-6 space-y-8 scrollbar-none">
         {/* Mensajes */}
         <div>
           <p className="text-xs font-semibold text-white/40 uppercase tracking-wide mb-3">Conversación</p>

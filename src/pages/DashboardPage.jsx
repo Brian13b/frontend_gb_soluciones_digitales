@@ -19,7 +19,7 @@ export default function DashboardPage() {
           transition={{ type: "spring", stiffness: 260, damping: 26 }}
           className="mb-10"
         >
-          <h1 className="text-2xl font-bold text-white">Hola, {firstName} 👋</h1>
+          <h1 className="text-2xl font-bold text-white">Hola, Equipo de GB</h1>
           <p className="text-sm text-white/40 mt-1.5">Este es el resumen de tu actividad reciente.</p>
         </motion.div>
  
