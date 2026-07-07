@@ -1,12 +1,14 @@
 import { useState } from "react"
 import { NavLink } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
-import { LayoutDashboard, MessagesSquare, FolderKanban, LogOut, ChevronLeft, ChevronRight } from "lucide-react"
+import { LayoutDashboard, MessagesSquare, Users, FolderKanban, LogOut, ChevronLeft, ChevronRight } from "lucide-react"
 import { useAuth } from "../../context/AuthContext"
 
 const NAV_ITEMS = [
   { label: "Inicio", path: "/", icon: LayoutDashboard },
   { label: "Conversaciones", path: "/conversaciones", icon: MessagesSquare },
+  { label: "Clientes", path: "/clientes", icon: Users },
+  { label: "Proyectos", path: "/proyectos", icon: FolderKanban },
 ]
 
 const sidebarVariants = {
