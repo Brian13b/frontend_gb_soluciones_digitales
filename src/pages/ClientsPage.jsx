@@ -40,7 +40,7 @@ export default function ClientsPage() {
               className="w-full mb-5"
             >
               <Plus size={16} />
-              Nuevo
+              Nuevo Cliente
             </Button>
             <div className="flex gap-2">
               <button

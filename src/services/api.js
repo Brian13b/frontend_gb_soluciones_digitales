@@ -43,7 +43,6 @@ async function request(path, { method = "GET", body, params, auth = true } = {})
       detail = data.detail || detail
     } catch {}
 
-    // Extract relevant headers (X-Client-ID, etc.)
     const headers = {}
     const clientId = res.headers.get("X-Client-ID")
     if (clientId) headers["X-Client-ID"] = clientId
@@ -59,7 +58,7 @@ export const api = {
   get: (path, params) => request(path, { method: "GET", params }),
   post: (path, body, opts = {}) => request(path, { method: "POST", body, ...opts }),
   patch: (path, body, opts = {}) => request(path, { method: "PATCH", body, ...opts }),
-  del: (path) => request(path, { method: "DELETE" }),
+  delete: (path) => request(path, { method: "DELETE" }),
 }
  
 export { ApiError }

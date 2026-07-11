@@ -8,7 +8,7 @@ const STATUS_COLORS = {
 
 export default function ClientItem({ client, active, onClick, onDelete }) {
   const status = STATUS_COLORS[client.status] || STATUS_COLORS.lead
-  const notesPreview = client.notes ? client.notes.split("\n")[0].substring(0, 60) : "Sin notas"
+  const notesPreview = client.notes ? "Hay notas" : "Sin notas"
 
   return (
     <motion.button
