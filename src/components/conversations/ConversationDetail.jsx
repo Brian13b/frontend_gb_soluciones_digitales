@@ -11,6 +11,7 @@ import Toast from "../ui/Toast"
 import { MessagesSquare, ChevronLeft, ExternalLink, Trash2 } from "lucide-react"
 import { ESTADOS } from "../../utils/constants"
 import { formatDateTime } from "../../utils/formatters"
+import ConfirmModal from "../ui/ConfirmModal"
 import { conversationsService } from "../../services/conversations.service"
 import { useAuth } from "../../context/AuthContext"
 

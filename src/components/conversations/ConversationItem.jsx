@@ -4,6 +4,7 @@ import Badge from "../ui/Badge"
 import { ESTADOS } from "../../utils/constants"
 import { formatDate } from "../../utils/formatters"
 
+
 const VALIDATION_COLORS = {
   VERIFIED: { color: "text-emerald-400", label: "Verificado" },
   PENDING: { color: "text-yellow-400", label: "Pendiente" },
