@@ -2,8 +2,6 @@ import { useState, useEffect, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import MessageBubble from "./MessageBubble"
-import ContactModal from "./ContactModal"
-import ContactsList from "./ContactsList"
 import Card from "../ui/Card"
 import Button from "../ui/Button"
 import Badge from "../ui/Badge"
@@ -25,8 +23,10 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
   const [modalOpen, setModalOpen] = useState(false)
   const [saving, setSaving] = useState(false)
   const [copied, setCopied] = useState(null)
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false)
   const [convertLoading, setConvertLoading] = useState(false)
   const [convertToast, setConvertToast] = useState(null)
+  const [toast, setToast] = useState(null)
 
   const load = useCallback(async () => {
     if (!conversationId) return
@@ -69,7 +69,6 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
     const currentIndex = ciclo.indexOf(conversation.estado)
     let nextIndex = (currentIndex + 1) % ciclo.length
 
-    // After first "FINALIZADA", skip back to "CONTACTADA" (not "ABIERTA")
     if (conversation.estado === "FINALIZADA" && currentIndex === 2) {
       nextIndex = 1
     }
@@ -79,17 +78,20 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
   }
 
   const handleDelete = async () => {
-    if (window.confirm("¿Estás seguro de que deseas eliminar este chat? Esta acción no se puede deshacer.")) {
-      setSaving(true)
-      try {
-        await conversationsService.delete(conversationId)
-        onStatusChanged?.()
-        onBack()
-      } catch (error) {
-        console.error("Error al eliminar", error)
-        setSaving(false)
-      }
+    setConfirmDeleteOpen(false)
+    setSaving(true)
+    try {
+      await conversationsService.delete(conversationId)
+      onStatusChanged?.()
+      onBack()
+    } catch (error) {
+      setToast({
+        type: "error",
+        message: error.detail || "Error al eliminar la conversación",
+      })
+      setSaving(false)
     }
+    
   }
 
   const handleConvertToClient = async () => {
@@ -240,7 +242,7 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
           </Button>
 
           <button
-            onClick={handleDelete}
+            onClick={() => setConfirmDeleteOpen(true)}
             disabled={saving}
             className="p-2 text-white/30 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors ml-1"
             title="Eliminar conversación"
@@ -262,7 +264,6 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
         </div>
       </div>
 
-      {/* Convert-to-Client Toast */}
       {convertToast && (
         <Toast
           type={convertToast.type}
@@ -271,6 +272,25 @@ export default function ConversationDetail({ conversationId, onStatusChanged, on
           onAction={convertToast.onAction}
           isOpen={true}
           onClose={() => setConvertToast(null)}
+        />
+      )}
+
+      <ConfirmModal
+        isOpen={confirmDeleteOpen}
+        title="Eliminar conversación"
+        message="¿Estás seguro de que deseas eliminar esta conversación? Esta acción no se puede deshacer."
+        cancelLabel="Cancelar"
+        confirmLabel="Eliminar"
+        variant="danger"
+        onCancel={() => setConfirmDeleteOpen(false)}
+        onConfirm={handleDelete}
+      />
+
+      {toast && (
+        <Toast
+          type={toast.type}
+          message={toast.message}
+          duration={3500}
         />
       )}
     </motion.div>

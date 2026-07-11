@@ -113,9 +113,6 @@ export default function ClientModal({ isOpen, onClose, onSuccess }) {
             />
           </label>
 
-          {/* NOTE: Status select is FREE in CREATE mode (not cyclic). User can start client as
-              'activo' if needed (e.g., legacy clients). The cyclic lead→activo flow is EDIT-only
-              in ClientDetail. */}
           <Select
             label="Estado"
             value={formData.status}
